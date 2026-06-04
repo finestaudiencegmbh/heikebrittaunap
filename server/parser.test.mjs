@@ -5,7 +5,7 @@
  * Ausführen:  node server/parser.test.mjs
  */
 import assert from 'node:assert/strict';
-import { parseSheets } from './parser.js';
+import { parseSheets, _internal } from './parser.js';
 import { buildDataset } from './build.js';
 import { loadScoringConfig } from './scoring.js';
 
@@ -80,6 +80,14 @@ assert.equal(ds.counts.tickets, 2, 'beide Ticket-Holder gezählt');
 // Spend-Zuordnung über Anzeigengruppe
 const spendKey = 'j&p | lp 1 | broad | dach | w | 30-55';
 assert.equal(ds.overviewByAdset[spendKey].adspend, 1030.66);
+
+// Datums-Parsing: ISO UND deutsches Format (TT.MM.JJJJ, oft manuell getippt,
+// z. B. in den Closings-Zeilen). Zähl-/Summenzeilen dürfen kein Datum ergeben.
+assert.equal(_internal.parseDate('2026-05-13 18:30:38 +0000'), '2026-05-13T18:30:38.000Z', 'ISO mit +0000');
+assert.equal(_internal.parseDate('13.05.2026'), '2026-05-13T00:00:00.000Z', 'deutsches Format TT.MM.JJJJ');
+assert.equal(_internal.parseDate('13.05.2026 11:00'), '2026-05-13T11:00:00.000Z', 'deutsches Format mit Uhrzeit');
+assert.equal(_internal.parseDate('161'), null, 'reine Zahl ist kein Datum');
+assert.equal(_internal.parseDate(''), null, 'leer ist kein Datum');
 
 console.log('✓ Alle Parser-/Dataset-Tests bestanden');
 console.log('  Leads:', ds.counts, '| Quality Rebecca:', rebecca.quality.score, rebecca.quality.tier);

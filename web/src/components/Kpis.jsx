@@ -62,6 +62,7 @@ export default function Kpis({ kpis, dist, tiers, features = {}, accent = '#d0bb
           <div className="kpi-section-head"><span className="kpi-dot" style={{ background: GREEN }} />Closings</div>
           <div className="kpi-grid">
             <Card label="Closings gesamt" value={fmtInt(closings.total)} sub={`${fmtInt(closings.paid)} über Ads · ${fmtInt(closings.organic)} organisch`} accent={GREEN} />
+            {closings.hasCash && <Card label="Cash Collect" value={fmtEur(closings.cashCollect)} sub={`${fmtEur(closings.cashCollectPaid)} über Ads · ${fmtEur(closings.cashCollectOrganisch)} organisch`} accent={GREEN} />}
             <Card label="Umsatz netto" value={fmtEur(closings.netto)} sub={`${fmtEur(closings.nettoPaid)} über Ads · ${fmtEur(closings.nettoOrganic)} organisch`} accent={GREEN} />
             <Card label="Umsatz brutto" value={fmtEur(closings.brutto)} sub={`${fmtEur(closings.bruttoPaid)} über Ads · ${fmtEur(closings.bruttoOrganic)} organisch`} accent={GREEN} />
           </div>

@@ -67,12 +67,22 @@ function isEmptyRow(row) {
 function parseDate(s) {
   const v = norm(s);
   if (!v) return null;
-  // Nur echte Datumsangaben akzeptieren (Format im Sheet:
-  // "2026-05-26 18:46:08 +0000"). Verhindert, dass Zähl-/Summenzeilen
-  // wie "161" fälschlich als Datum (Jahr 161) interpretiert werden.
-  if (!/^\d{4}-\d{2}-\d{2}/.test(v)) return null;
-  const d = new Date(v.replace(' +0000', 'Z').replace(' ', 'T'));
-  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  // ISO-Format aus dem Sheet: "2026-05-26 18:46:08 +0000" oder "2026-03-04T08:01Z".
+  if (/^\d{4}-\d{2}-\d{2}/.test(v)) {
+    const d = new Date(v.replace(' +0000', 'Z').replace(' ', 'T'));
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  // Deutsches Format (oft manuell getippt): "13.05.2026" (optional mit Uhrzeit).
+  // Als UTC interpretiert, passend zu den +0000-Zeitstempeln der übrigen Zeilen.
+  const m = v.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);
+  if (m) {
+    const [, dd, mm, yyyy, hh = '0', min = '0'] = m;
+    const d = new Date(Date.UTC(+yyyy, +mm - 1, +dd, +hh, +min));
+    return Number.isNaN(d.getTime()) ? null : d.toISOString();
+  }
+  // Sonst kein Datum (verhindert, dass Zähl-/Summenzeilen wie "161" oder "83"
+  // fälschlich als Datum interpretiert werden).
+  return null;
 }
 
 const normEmail = (s) => norm(s).toLowerCase();

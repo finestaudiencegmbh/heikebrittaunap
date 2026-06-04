@@ -124,8 +124,14 @@ export default function App() {
     const nettoPaid = sum(paidRows, (c) => c.revenueNet);
     const brutto = sum(filteredClosings, (c) => c.revenueGross);
     const bruttoPaid = sum(paidRows, (c) => c.revenueGross);
+    // Cash Collect liegt im Sheet nur als Gesamtsumme (Summenzeile) vor, nicht je
+    // Verkauf -> aus closingsSummary (daher nicht datums-/filterabhängig).
+    const cs = data?.closingsSummary || null;
+    const hasCash = Boolean(cs) && (cs.cashCollectPaid != null || cs.cashCollectOrganisch != null);
     return {
-      has: (data?.counts?.closings || 0) > 0,
+      // Block auch zeigen, wenn (noch) keine datierten Einzelverkäufe, aber eine
+      // Summenzeile mit Closings/Cash-Collect-Werten existiert.
+      has: total > 0 || Boolean(cs),
       total,
       paid: paidRows.length,
       organic: total - paidRows.length,
@@ -135,6 +141,10 @@ export default function App() {
       brutto,
       bruttoPaid,
       bruttoOrganic: brutto - bruttoPaid,
+      hasCash,
+      cashCollect: cs?.cashCollect || 0,
+      cashCollectPaid: cs?.cashCollectPaid || 0,
+      cashCollectOrganisch: cs?.cashCollectOrganisch || 0,
     };
   }, [filteredClosings, data]);
   const dist = useMemo(() => (data ? tierDistribution(filtered, tiers) : {}), [data, filtered, tiers]);
