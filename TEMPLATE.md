@@ -29,8 +29,10 @@ Dazu kommen das **Logo** (`web/public/logo.svg`) und die **Umgebungsvariablen**
   "subtitle": "Veranstalter · Datum", // optionale Subline (leer = aus)
 
   "branding": {
-    "accent": "#cb997e",            // Akzentfarbe (Hex) – KPIs, Buttons, Graphen
-    "logo": "/logo.svg"             // Pfad zum Logo in web/public/
+    "accent": "#cb997e",            // Akzentfarbe (Hex) – die helleren/dunkleren Töne
+                                    // (Verläufe, Hover, Soft-Flächen) werden daraus abgeleitet
+    "logo": "/logo.svg",            // Pfad zum Bildlogo in web/public/ – LEER ("") = kein Bildlogo
+    "mark": "HBA"                   // Textmarke (Kürzel), wird statt des Bildlogos angezeigt
   },
 
   "features": {
@@ -107,10 +109,18 @@ CPL/Kosten-pro-Ticket). Traffic-/Awareness-Kampagnen werden über das Meta-Ziel
 automatisch ausgeschlossen; `overrides` für manuelle Korrekturen. `organicPatterns`
 definiert, was als organische Quelle gilt.
 
-### 5. Logo
+### 5. Logo / Favicon
 
-`web/public/logo.svg` durch das Projekt-Logo ersetzen (gleicher Dateiname, oder
-Pfad in `project.config.json -> branding.logo` anpassen).
+Zwei Möglichkeiten:
+
+- **Bildlogo:** `web/public/logo.svg` durch das Projekt-Logo ersetzen (gleicher
+  Dateiname, oder Pfad in `project.config.json -> branding.logo` anpassen).
+- **Textmarke (kein Bildlogo):** `branding.logo` leer lassen (`""`) und unter
+  `branding.mark` ein Kürzel setzen (z. B. `"HBA"`). Es wird dann eine Markenfläche
+  in der Akzentfarbe mit diesem Kürzel angezeigt.
+
+Das **Favicon** liegt in `web/public/favicon.svg` (in `web/index.html` verlinkt) –
+für ein eigenes Projekt diese Datei austauschen.
 
 ### 6. Umgebungsvariablen setzen
 

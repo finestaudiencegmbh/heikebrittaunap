@@ -24,6 +24,31 @@ const EMPTY_FILTERS = {
   income: '', realEstate: '', employment: '', from: '', to: '', onlyTickets: false, tiers: [],
 };
 
+// --- Branding-Helfer: alle Akzent-Töne aus EINER Hex-Farbe (branding.accent)
+// ableiten, damit ein Projekt nur eine Farbe in der Config setzen muss. -------
+const clamp = (n) => Math.max(0, Math.min(255, Math.round(n)));
+const hexToRgb = (hex) => {
+  const h = String(hex || '').replace('#', '');
+  const s = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  const n = parseInt(s, 16);
+  return Number.isNaN(n) ? null : { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+};
+const toHex = ({ r, g, b }) => `#${[r, g, b].map((v) => clamp(v).toString(16).padStart(2, '0')).join('')}`;
+const mix = (c, target, amt) => ({ r: c.r + (target - c.r) * amt, g: c.g + (target - c.g) * amt, b: c.b + (target - c.b) * amt });
+const lighten = (hex, amt) => { const c = hexToRgb(hex); return c ? toHex(mix(c, 255, amt)) : hex; };
+const darken = (hex, amt) => { const c = hexToRgb(hex); return c ? toHex(mix(c, 0, amt)) : hex; };
+const rgba = (hex, a) => { const c = hexToRgb(hex); return c ? `rgba(${c.r}, ${c.g}, ${c.b}, ${a})` : hex; };
+function applyAccent(hex) {
+  const root = document.documentElement.style;
+  root.setProperty('--accent', hex);
+  root.setProperty('--accent-2', lighten(hex, 0.22));
+  root.setProperty('--accent-hover', lighten(hex, 0.22));
+  root.setProperty('--accent-deep', darken(hex, 0.28));
+  root.setProperty('--accent-soft', rgba(hex, 0.14));
+  root.setProperty('--accent-ink', lighten(hex, 0.42));
+}
+const initials = (s) => String(s || '').trim().split(/\s+/).map((w) => w[0]).filter(Boolean).join('').slice(0, 3).toUpperCase();
+
 export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -63,13 +88,16 @@ export default function App() {
   const features = project?.features || { hasTickets: true, hasQuality: true };
   const ticketLabel = project?.ticketLabel || { singular: 'VIP-Ticket', plural: 'VIP-Tickets' };
   const accent = project?.branding?.accent || '#d0bb5a';
-  const logo = project?.branding?.logo || '/logo.svg';
+  const logo = project?.branding?.logo || '';
+  const hasLogo = Boolean(logo);
   const brandTitle = project?.shortName || 'Dashboard';
   const brandSub = project?.subtitle || '';
+  // Textmarke (z. B. "HBA"), wenn kein Bildlogo gesetzt ist
+  const mark = project?.branding?.mark || initials(brandTitle) || 'DB';
 
-  // Akzentfarbe als CSS-Variable + Seitentitel zur Laufzeit setzen
+  // Akzentfarbe (inkl. abgeleiteter Töne) als CSS-Variablen zur Laufzeit setzen
   useEffect(() => {
-    if (accent) document.documentElement.style.setProperty('--accent', accent);
+    if (accent) applyAccent(accent);
   }, [accent]);
   useEffect(() => {
     if (project?.name) {
@@ -173,7 +201,9 @@ export default function App() {
     <div className="layout">
       <aside className="sidebar">
         <div className="brand">
-          <img className="brand-logo" src={logo} alt={brandTitle} width="40" height="40" />
+          {hasLogo
+            ? <img className="brand-logo" src={logo} alt={brandTitle} width="40" height="40" />
+            : <div className="brand-mark" aria-hidden="true">{mark}</div>}
           <div className="brand-text">
             <div className="brand-title">{brandTitle}</div>
             {brandSub && <div className="brand-sub">{brandSub}</div>}
@@ -195,7 +225,9 @@ export default function App() {
       <main className="content">
         <header className="topbar">
           <div className="topbar-title">
-            <img className="topbar-logo" src={logo} alt="" width="34" height="34" />
+            {hasLogo
+              ? <img className="topbar-logo" src={logo} alt="" width="34" height="34" />
+              : <div className="brand-mark topbar-mark" aria-hidden="true">{mark}</div>}
             <div>
               <h1>{NAV.find((n) => n.key === view)?.label}</h1>
               <p className="subtitle">{features.hasTickets ? `Lead- & ${ticketLabel.plural}-Dashboard` : 'Lead-Dashboard'}</p>

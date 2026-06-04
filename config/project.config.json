@@ -1,14 +1,15 @@
 {
   "_comment": "Zentrale Projekt-Konfiguration. HIER wird ein neues Dashboard eingerichtet – nicht im Code. Siehe TEMPLATE.md. Nach Änderungen den Server neu starten (die Datei wird beim Start gelesen).",
 
-  "name": "Edith Pauls Gefühlsklar Workshop",
-  "shortName": "Gefühlsklar",
-  "subtitle": "Edith Pauls · Workshop",
+  "name": "Heike Britt Aunap",
+  "shortName": "Heike Britt Aunap",
+  "subtitle": "Workshop-Dashboard",
 
-  "_comment_branding": "accent = Akzentfarbe (Hex) für KPIs, Buttons, Graphen. logo = Pfad zum Logo in web/public (wird als /<datei> ausgeliefert).",
+  "_comment_branding": "accent = Akzentfarbe (Hex) für KPIs, Buttons, Graphen (die helleren/dunkleren Töne werden zur Laufzeit daraus abgeleitet). logo = Pfad zum Logo in web/public (leer = kein Bildlogo, dann wird die Textmarke 'mark' angezeigt). mark = Kürzel für die Logo-/Markenfläche, wenn kein Bildlogo gesetzt ist.",
   "branding": {
-    "accent": "#cb997e",
-    "logo": "/logo.svg"
+    "accent": "#b98d53",
+    "logo": "",
+    "mark": "HBA"
   },
 
   "_comment_features": "Feature-Flags. hasTickets=false blendet ALLE ticketbezogenen KPIs/Spalten aus (€/Ticket, CVR Ticket, Kosten/Ticket, VIP). hasQuality=false blendet das komplette Fragebogen-/Scoring-System aus (Quali-Rate, Ø Quali, Tier-Verteilung, Fragebogen-Filter).",
@@ -23,7 +24,7 @@
     "plural": "VIP-Tickets"
   },
 
-  "_comment_sheet": "Tabellen-Erkennung + Spalten-Mapping dieses Sheets ('KPIs Webinar B2C_Edith Pauls'). Schlüssel normalisiert: kleingeschrieben, ohne ? : ., Mehrfach-Leerzeichen kollabiert. overview = Creative-Übersicht (Adspend je Creative), leads = Leads-Tab. detect.all müssen alle vorhanden sein, detect.any mindestens eines (grenzt Leads sauber gegen Termine/Closings/Teilnehmer/Watchtime ab).",
+  "_comment_sheet": "Tabellen-Erkennung + Spalten-Mapping dieses Sheets (Heike Britt Aunap, Webinar-Funnel). Schlüssel normalisiert: kleingeschrieben, ohne ? : ., Mehrfach-Leerzeichen kollabiert. Relevante Reiter: leads, termine, closings; overview = Creative-Übersicht (Adspend je Creative). detect.all müssen alle vorhanden sein, detect.any mindestens eines. Die detect-Regeln grenzen die Reiter sauber gegeneinander ab (z. B. 'leads aus ads' nur im Leads-Tab, 'datum gespräch' nur in Termine, 'produkt'+'umsatz netto' nur in Closings) – Teilnehmer-/Watchtime-Reiter werden bewusst ignoriert.",
   "sheet": {
     "overview": {
       "detect": { "all": ["adspend"], "any": ["creative", "anzeigengruppe"] },
@@ -33,16 +34,17 @@
         "adspend": ["adspend"],
         "clicks": ["ausg klicks"],
         "cpc": ["cpc"],
-        "cvrStart": ["cvr start"],
+        "cvrStart": ["cvr webinar", "cvr start"],
         "leads": ["leads"]
       }
     },
     "leads": {
-      "detect": { "all": ["datum", "name"], "any": ["leads aus ads", "a/b variante"] },
+      "detect": { "all": ["name", "leads aus ads"], "any": [] },
       "fields": {
         "at": ["datum"],
         "firstName": ["name"],
         "lastName": [],
+        "name": ["name"],
         "email": ["e-mail"],
         "utmSource": ["utm source"],
         "utmMedium": ["utm medium"],
@@ -65,9 +67,9 @@
       }
     },
     "closings": {
-      "detect": { "all": ["datum kauf", "produkt"], "any": [] },
+      "detect": { "all": ["produkt", "umsatz netto"], "any": [] },
       "fields": {
-        "at": ["datum kauf"],
+        "at": ["datum kauf", "datum"],
         "name": ["name"],
         "email": ["e-mail"],
         "phone": ["telefon"],
@@ -87,29 +89,8 @@
     }
   },
 
+  "_comment_questionnaire": "Fragebogen-/Ticket-System ist für dieses Projekt deaktiviert (hasTickets/hasQuality=false). Leeres detect = kein Tab wird als Ticket-Tab erkannt.",
   "questionnaire": {
-    "_comment": "Mapping der Sheet-Spalten des Fragebogen-/Ticket-Tabs auf die internen Felder (nur relevant wenn hasTickets/hasQuality=true). Schlüssel sind normalisiert: kleingeschrieben, ohne ? : . – mehrere Varianten je Feld möglich (erste nicht-leere gewinnt). Die Antworten-Schlüssel (income, invested, realEstate, employment …) entsprechen den in scoring.json verwendeten Dimensionen.",
-    "detect": {
-      "any": ["monatliches einkommen", "immobilien im besitz"],
-      "all": ["teilgenommen am", "vorname"]
-    },
-    "fields": {
-      "at": ["teilgenommen am"],
-      "firstName": ["vorname"],
-      "lastName": ["nachname"],
-      "email": ["e-mail (funnelcockpit)", "e-mail (typeform)", "e-mail"],
-      "emailTypeform": ["e-mail (typeform)"],
-      "phone": ["handynummer"]
-    },
-    "answers": {
-      "employment": ["angestellt selbstständig oder unternehmer"],
-      "challenge": ["größte herausforderung im vermögensaufbau"],
-      "income": ["monatliches einkommen"],
-      "realEstate": ["immobilien im besitz"],
-      "invested": ["geld investiert in den vermögensaufbau wenn ja wie viel"],
-      "relationship": ["beziehungsstand"],
-      "expectation": ["was erhoffst du dir von den 4 abenden"]
-    },
-    "leadTicketColumn": ["vip-ticket geholt am"]
+    "detect": { "all": [], "any": [] }
   }
 }

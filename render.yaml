@@ -4,7 +4,7 @@
 
 services:
   - type: web
-    name: edith-pauls-dashboard
+    name: heike-britt-aunap-dashboard
     runtime: node
     plan: free
     # devDependencies (vite) werden für den Build gebraucht -> explizit mitinstallieren
@@ -18,7 +18,7 @@ services:
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
       - key: SPREADSHEET_ID
-        value: 1IVBZHA2P69EHp2YHihvuVqfage5fyIi55dPwy-aK63s
+        value: 1MD9k-tu755Pd4b85Z_YL-U5GUiglcg1L-VX-Q6L-sQM
       - key: CACHE_TTL_SECONDS
         value: "900"
       # --- KI-Chatbot (optional) – Anthropic-API-Key ---
@@ -39,7 +39,7 @@ services:
       - key: META_ACCESS_TOKEN
         sync: false
       - key: META_AD_ACCOUNT_ID
-        value: act_352721153514137
+        value: act_516593034117215
       # --- Facebook-Ads via Supermetrics – optional, leer = aus ---
       - key: SUPERMETRICS_API_KEY
         sync: false
