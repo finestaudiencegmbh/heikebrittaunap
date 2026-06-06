@@ -109,6 +109,12 @@ CPL/Kosten-pro-Ticket). Traffic-/Awareness-Kampagnen werden über das Meta-Ziel
 automatisch ausgeschlossen; `overrides` für manuelle Korrekturen. `organicPatterns`
 definiert, was als organische Quelle gilt.
 
+**`nameAliases`** – falls eine Kampagne/Anzeigengruppe/Anzeige in Meta
+**nachträglich umbenannt** wurde und dadurch nicht mehr zum UTM-Namen im Sheet
+passt (Attribution greift dann nicht). Pro Eintrag `{ "from": "<Name wie im
+Sheet/UTM>", "to": "<Name wie in Meta>" }`; beide werden gleich normalisiert
+(Bindestrich-Varianten, Groß-/Kleinschreibung, Leerzeichen egal).
+
 ### 5. Logo / Favicon
 
 Zwei Möglichkeiten:

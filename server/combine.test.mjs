@@ -74,6 +74,23 @@ const d27 = daily.leads.find((d) => d.date === '2026-05-27');
 assert.equal(d27.leads, 2, 'zwei Leads am 27.');
 assert.equal(d27.tickets, 1);
 
+// --- Alias-Matching: in Meta nachträglich umbenanntes Creative ---------------
+// Sheet/UTM: "20260603 - Creative 8 AG1"  ->  Meta: "20260603 – Creative 8"
+// (En-Dash + ohne AG-Suffix). Über campaigns.json -> nameAliases muss es matchen.
+const metaAlias = {
+  entities: [
+    { campaignId: 'cc', campaign: 'Kampagne C', adsetId: 'ac', adset: 'AG C', adId: 'adc', creative: '20260603 – Creative 8', spend: 90, impressions: 9000, clicks: 100, uniqueOutboundClicks: 80 },
+  ],
+  campaignStatus: { 'Kampagne C': { status: 'ACTIVE', active: true, objective: 'OUTCOME_LEADS' } },
+  adsetStatus: { 'AG C': { status: 'ACTIVE', active: true } },
+};
+const aliasLeads = [
+  { sourceType: 'paid', campaign: 'Kampagne C', adset: 'AG C', creative: '20260603 - Creative 8 AG1', wonAt: '2026-06-03T10:00:00Z', hasTicket: false },
+];
+const aliasRes = combineMetaWithLeads(metaAlias, aliasLeads);
+const adAlias = aliasRes.hierarchy[0].adsets[0].ads[0];
+assert.equal(adAlias.leads, 1, 'in Meta umbenanntes Creative via nameAliases korrekt zugeordnet');
+
 function round2(n) { return Math.round(n * 100) / 100; }
 
 console.log('✓ Alle Combine-Tests bestanden');

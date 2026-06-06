@@ -11,5 +11,10 @@
   "paidPatterns": ["cbo", "fa -", "ag1:", "ag2:", "ag3:", "ag4", "ag5", "ag6", "ag7", "winning", "launch live webinar"],
   "organicPatterns": ["email", "newsletter", "website", "bio", "manychat", "instagram", "sacredlife", "direkt"],
   "organicLabel": "(organisch)",
-  "unattributablePaidLabel": "(Paid · nicht zuordenbar)"
+  "unattributablePaidLabel": "(Paid · nicht zuordenbar)",
+
+  "_comment_nameAliases": "Manuelle Namens-Zuordnung FB<->Sheet für die Attribution. Nötig, wenn eine Kampagne/Anzeigengruppe/Anzeige in Meta NACHTRÄGLICH umbenannt wurde und dadurch nicht mehr zum UTM-Namen im Sheet passt. 'from' = abweichender Name (z. B. wie im Sheet/UTM erfasst), 'to' = Zielname (z. B. der aktuelle Meta-Name). Beide werden gleich normalisiert (Bindestrich-Varianten, Groß-/Kleinschreibung und Mehrfach-Leerzeichen egal), danach gelten sie als derselbe Eintrag. Gilt für Kampagnen-, Anzeigengruppen- und Creative-Namen.",
+  "nameAliases": [
+    { "from": "20260603 - Creative 8 AG1", "to": "20260603 - Creative 8" }
+  ]
 }

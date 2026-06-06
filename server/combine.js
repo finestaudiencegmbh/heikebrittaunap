@@ -18,16 +18,35 @@
 
 import { loadCampaignConfig, isLeadCampaign } from './campaigns.js';
 
-// Normalisiert Namen fürs Matching FB <-> Sheet: vereinheitlicht Bindestriche
+// Basis-Normalisierung fürs Matching FB <-> Sheet: vereinheitlicht Bindestriche
 // (– — −  ->  -), entfernt "Kopie"/"Copy"-Suffixe (Sheet hat oft "… – Kopie",
 // FB nicht) und kollabiert Whitespace.
-const normKey = (s) =>
+const baseNorm = (s) =>
   String(s ?? '')
     .replace(/[‐-―−]/g, '-')        // diverse Bindestriche -> "-"
     .replace(/[\s-]*\b(kopie|copy)\b\s*\d*$/i, '')  // "– Kopie", "- Copy 2" am Ende weg
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
+
+// Alias-Map für nachträgliche Umbenennungen (campaigns.json -> nameAliases):
+// normalisierter Variantenname -> normalisierter Zielname. Einmalig gecached
+// (Config-Änderungen erfordern – wie sonst auch – einen Server-Neustart).
+let _aliasMap = null;
+function aliasMap() {
+  if (_aliasMap) return _aliasMap;
+  _aliasMap = new Map();
+  for (const a of loadCampaignConfig().nameAliases || []) {
+    if (a && a.from && a.to) _aliasMap.set(baseNorm(a.from), baseNorm(a.to));
+  }
+  return _aliasMap;
+}
+
+// Normalisierter Matching-Schlüssel inkl. Auflösung manueller Aliase.
+const normKey = (s) => {
+  const base = baseNorm(s);
+  return aliasMap().get(base) || base;
+};
 
 function emptyMetrics() {
   return { spend: 0, impressions: 0, clicks: 0, uoc: 0, leads: 0, tickets: 0, scoreSum: 0, scored: 0, qualified: 0 };
